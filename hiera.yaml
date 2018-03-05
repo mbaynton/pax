@@ -1,0 +1,17 @@
+---
+version: 5
+defaults:
+  datadir: data
+  data_hash: yaml_data
+
+hierarchy:
+  - name: "OS Version values"
+    glob: "paxdb/*/os/%{facts.os.name}/%{facts.os.release.major}.yaml"
+  - name: "OS values"
+    glob: "paxdb/*/os/%{facts.os.name}.yaml"
+  - name: "OS Family Version values"
+    glob: "paxdb/*/osfamily/%{facts.os.family}/%{facts.os.release.major}.yaml"
+  - name: "OS Family values"
+    glob: "paxdb/*/osfamily/%{facts.os.family}.yaml"
+  - name: "Defaults"
+    path: "defaults/*.yaml"

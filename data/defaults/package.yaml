@@ -1,0 +1,4 @@
+pax:
+  defaults:
+    package:
+      ensure: present
