@@ -33,3 +33,5 @@ pax::repotrust:
         RjsC7FDbL017qxS+ZVA/HGkyfiu4cpgV8VUnbql5eAZ+1Ll6Dw==
         =hdPa
         -----END PGP PUBLIC KEY BLOCK-----
+        
+# Above line is necessary to place a newline at the end of the content
