@@ -1,0 +1,4 @@
+pax::defaults:
+  repo:
+    yumrepo:
+      mirrorlist_tail: ""

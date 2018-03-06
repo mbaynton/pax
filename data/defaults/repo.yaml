@@ -1,9 +1,9 @@
-pax:
-  defaults:
-    repo:
-      yumrepo:
-        baseurl: http://mirror.centos.org/centos
-        mirrorlisturl: http://mirrorlist.centos.org    
-        # Use the mirrorlist system by default
-        enable_baseurl: false
-        enable_mirrorlist: true
+pax::defaults:
+  repo:
+    yumrepo:
+      baseurl: http://mirror.centos.org/centos
+      mirrorlisturl: http://mirrorlist.centos.org    
+      # Use the mirrorlist system by default
+      enable_baseurl: false
+      enable_mirrorlist: true
+      mirrorlist_tail: "&infra=$infra"

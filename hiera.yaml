@@ -6,12 +6,12 @@ defaults:
 
 hierarchy:
   - name: "OS Version values"
-    glob: "paxdb/*/os/%{facts.os.name}/%{facts.os.release.major}.yaml"
+    glob: "paxdb/*/os/%{facts.os.name}/%{facts.os.release.major}/*.yaml"
   - name: "OS values"
-    glob: "paxdb/*/os/%{facts.os.name}.yaml"
+    glob: "paxdb/*/os/%{facts.os.name}/*.yaml"
   - name: "OS Family Version values"
-    glob: "paxdb/*/osfamily/%{facts.os.family}/%{facts.os.release.major}.yaml"
+    glob: "paxdb/*/osfamily/%{facts.os.family}/%{facts.os.release.major}/*.yaml"
   - name: "OS Family values"
-    glob: "paxdb/*/osfamily/%{facts.os.family}.yaml"
+    glob: "paxdb/*/osfamily/%{facts.os.family}/*.yaml"
   - name: "Defaults"
-    path: "defaults/*.yaml"
+    glob: "defaults/*.yaml"
