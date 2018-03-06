@@ -1,0 +1,12 @@
+pax::repo:
+  updates:
+    resource: yumrepo
+    params:
+      enabled: true
+      enable_baseurl: "%{hiera('pax::defaults.repo.yumrepo.enable_baseurl')}"
+      baseurl: "%{hiera('pax::defaults.repo.yumrepo.baseurl')}/$releasever/updates/$basearch/"
+      enable_mirrorlist: "%{hiera('pax::defaults.repo.yumrepo.enable_mirrorlist')}"
+      mirrorlist: "%{hiera('pax::defaults.repo.yumrepo.mirrorlisturl')}/?release=$releasever&arch=$basearch&repo=updates%{hiera('pax::defaults.repo.yumrepo.mirrorlist_tail')}"
+      descr: CentOS-$releasever - Updates
+      gpgcheck: 1
+      gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-%{::pax::repo_helpers::el::releasever}

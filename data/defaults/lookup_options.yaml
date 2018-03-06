@@ -1,3 +1,7 @@
 lookup_options:
   pax::defaults:
     merge: deep
+  pax::repo:
+    merge: hash
+  pax::repotrust:
+    merge: hash
