@@ -1,4 +1,5 @@
 function pax::repo(String $name) {
+  include pax
   $repo_info = lookup("pax::repo.${name}")
 
   # Ensure any required repository trust configuration is imported.
@@ -8,7 +9,7 @@ function pax::repo(String $name) {
     if (! defined(Pax::Repo_helpers::Repotrust[$repo_info['repotrust']])) {
       $trust_info = lookup("pax::repotrust.${repo_info['repotrust']}")
       pax::repo_helpers::repotrust{ $repo_info['repotrust']:
-        trust_info => $trust_info
+        trust_info => $trust_info,
       }
     }
   } else {
