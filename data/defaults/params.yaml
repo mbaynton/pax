@@ -1,0 +1,2 @@
+pax::manage_repos: true
+pax::manage_repo_trust: true
