@@ -4,7 +4,7 @@ Puppet::Functions.create_function(:'pax::repo_helpers::yumrepo_params') do
   end
 
   def truthy(param)
-    if param == false || param == "false" || param == 0 || param == "0" || param == ""
+    if [false, 'false', 0, '0', ''].include?(param)
       false
     else
       true
@@ -15,26 +15,27 @@ Puppet::Functions.create_function(:'pax::repo_helpers::yumrepo_params') do
   #  * enable_baseurl
   #  * enable_mirrorlist
   # may also be specified. Remove these, and if they are present and false,
-  # set their corresponding yumrepo parameter to 'absent'.  
+  # set their corresponding yumrepo parameter to 'absent'.
   def yumrepo_params(input_params)
     output_params = {}
     input_params.each do |key, value|
       case key
-      when "enable_baseurl"
-      when "enable_mirrorlist"
+      when 'enable_baseurl'
         next
-      when "baseurl"
-        if input_params.has_key?('enable_baseurl') && truthy(input_params['enable_baseurl']) == false
-          output_params[key] = 'absent'
-        else
-          output_params[key] = value
-        end
-      when "mirrorlist"
-        if input_params.has_key?('enable_mirrorlist') && truthy(input_params['enable_mirrorlist']) == false
-          output_params[key] = 'absent'
-        else
-          output_params[key] = value
-        end
+      when 'enable_mirrorlist'
+        next
+      when 'baseurl'
+        output_params[key] = if input_params.key?('enable_baseurl') && truthy(input_params['enable_baseurl']) == false
+                               'absent'
+                             else
+                               value
+                             end
+      when 'mirrorlist'
+        output_params[key] = if input_params.key?('enable_mirrorlist') && truthy(input_params['enable_mirrorlist']) == false
+                               'absent'
+                             else
+                               value
+                             end
       else
         output_params[key] = value
       end
