@@ -1,4 +1,18 @@
-function pax::package(String $name) {
+# == Function: pax::package
+#
+# Function used to install a package by the name known to your OS's
+# package manager.
+#
+# === Parameters
+#
+# [*name*]
+#   The name of the package to install.
+#
+# === Return
+#   An array of Resource types that were added to the manifest as a result
+#   of calling this function.
+#   You can use this, for example, in require => metaparameters.
+function pax::package(String $name) >> Array[Resource] {
   # Ensure the required repository is ready.
   $package_info = lookup("pax.package.${name}")
   pax::repo($package_info['repo'])
@@ -19,4 +33,7 @@ function pax::package(String $name) {
       * => $params
     }
   }
+
+  # Return the Package we selected, so callers can set up ordering relationships.
+  [Package[$name]]
 }
