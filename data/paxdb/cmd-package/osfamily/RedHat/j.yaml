@@ -1,3 +1,2 @@
-pax:
-  cmd-package:
-    jq: jq
+pax::cmd-package:
+  jq: jq

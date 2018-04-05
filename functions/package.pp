@@ -12,14 +12,13 @@
 #   An array of Resource types that were added to the manifest as a result
 #   of calling this function.
 #   You can use this, for example, in require => metaparameters.
-function pax::package(String $name) >> Array[Resource] {
+function pax::package(String $name) >> Array[Type[Resource]] {
   # Ensure the required repository is ready.
-  $package_info = lookup("pax.package.${name}")
+  $package_info = lookup("pax::package.${name}")
   pax::repo($package_info['repo'])
 
-  $default_params = lookup('pax.defaults.package')
-  $override_params = $package_info['params']
-  if (defined('$package_info[\'params\']')) {
+  $default_params = lookup('pax::defaults.package')
+  if ($package_info.has_key('params')) {
     $override_params = $package_info['params']
   } else {
     $override_params = {}

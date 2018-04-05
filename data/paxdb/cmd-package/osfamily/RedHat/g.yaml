@@ -1,3 +1,2 @@
-pax:
-  cmd-package:
-    git: git
+pax::cmd-package:
+  git: git

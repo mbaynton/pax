@@ -21,9 +21,9 @@
 #   An array of Resource types that were added to the manifest as a result
 #   of calling this function.
 #   You can use this, for example, in require => metaparameters.
-function pax::cmd(String $name) >> Array[Resource] {
+function pax::cmd(String $name) >> Array[Type[Resource]] {
   # Get the package name for this command
-  $package = lookup("pax.cmd-package.${name}")
+  $package = lookup("pax::cmd-package.${name}")
 
   # Ensure the package is included in the manifest
   pax::package($package)

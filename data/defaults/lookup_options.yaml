@@ -1,6 +1,10 @@
 lookup_options:
   pax::defaults:
     merge: deep
+  pax::cmd-package:
+    merge: hash
+  pax::package:
+    merge: deep # To facilitate site adjustments to specific packages
   pax::repo:
     merge: hash
   pax::repotrust:
