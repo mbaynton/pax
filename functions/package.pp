@@ -27,9 +27,19 @@ function pax::package(String $name) >> Array[Type[Resource]] {
   $params = merge($default_params, $override_params)
 
   # Include the package, if it is not already in the catalog.
+  if ($params.has_key('tag')) {
+    $tag = $params['tag'] ? {
+      Array   => $params['tag'],
+      default => [$params['tag']]
+    }
+  } else {
+    $tag = []
+  }
+
   if (! defined(Package[$name])) {
     package { $name:
-      * => $params
+      tag => ['pax_package'].merge($tag),
+      *   => $params.delete('tag')
     }
   }
 
