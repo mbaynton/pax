@@ -38,7 +38,7 @@ function pax::package(String $name) >> Array[Type[Resource]] {
 
   if (! defined(Package[$name])) {
     package { $name:
-      tag => ['pax_package'].merge($tag),
+      tag => ['pax_package'] + $tag,
       *   => $params.delete('tag')
     }
   }
