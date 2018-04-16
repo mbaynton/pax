@@ -1,5 +1,7 @@
 function pax::repo(String $name) {
-  include pax
+  if ! defined(Class['pax']) {
+    fail('You must include the pax base class before using any pax functions.')
+  }
 
   if ($::pax::manage_repos or $::pax::manage_repo_trust) {
     $repo_info = lookup("pax::repo.${name}")
