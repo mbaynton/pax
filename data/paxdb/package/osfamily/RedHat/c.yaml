@@ -1,0 +1,3 @@
+pax::package:
+  composer:
+    repo: epel
