@@ -1,3 +1,7 @@
 pax::package:
+  expat-devel:
+    repo: base
   libtool:
+    repo: base
+  libxml2-devel:
     repo: base

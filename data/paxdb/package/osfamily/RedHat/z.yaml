@@ -1,0 +1,3 @@
+pax::package:
+  zlib-devel:
+    repo: base

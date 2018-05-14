@@ -1,2 +1,4 @@
 pax::cmd-package:
+  libexpat1-dev: expat-devel
   libtool: libtool
+  libxml2-dev: libxml2-devel

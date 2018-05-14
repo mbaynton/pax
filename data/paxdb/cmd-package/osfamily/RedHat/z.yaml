@@ -1,0 +1,2 @@
+pax::cmd-package:
+  zlib1g-dev: zlib-devel
