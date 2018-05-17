@@ -1,0 +1,11 @@
+pax::repo:
+  shibboleth:
+    resource: yumrepo
+    params:
+      enabled: true
+      enable_baseurl: false
+      mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/CentOS_7
+      descr: Shibboleth for Enterprise Linux
+      gpgcheck: 1
+      gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-%{::pax::repo_helpers::el::releasever}
+    repotrust: RPM-GPG-KEY-SHIBBOLETH-%{::pax::repo_helpers::el::releasever}
