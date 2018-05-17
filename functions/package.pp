@@ -13,8 +13,16 @@
 #   of calling this function.
 #   You can use this, for example, in require => metaparameters.
 function pax::package(String $name) >> Array[Type[Resource]] {
+  # Fetch the package. Package names sometimes have . characters,
+  # so we cannot use lookup()'s . shorthand to dig into pax::package.
+  $packages = lookup("pax::package")
+  if ($packages.has_key($name)) {
+    $package_info = $packages[$name]
+  } else {
+    fatal("Could not find package \"${name}\" in the pax package database.")
+  }
+
   # Ensure the required repository is ready.
-  $package_info = lookup("pax::package.${name}")
   pax::repo($package_info['repo'])
 
   $default_params = lookup('pax::defaults.package')
