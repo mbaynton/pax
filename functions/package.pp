@@ -15,7 +15,7 @@
 function pax::package(String $name) >> Array[Type[Resource]] {
   # Fetch the package. Package names sometimes have . characters,
   # so we cannot use lookup()'s . shorthand to dig into pax::package.
-  $packages = lookup("pax::package")
+  $packages = lookup('pax::package')
   if ($packages.has_key($name)) {
     $package_info = $packages[$name]
   } else {
@@ -44,10 +44,13 @@ function pax::package(String $name) >> Array[Type[Resource]] {
     $tag = []
   }
 
-  if (! defined(Package[$name])) {
+  $param_hash = merge({'tag' => ['pax_package'] + $tag}, $params)
+
+  # defined_with_params increases likelihood of desirable compile errors if the
+  # same package was also included through other means.
+  if (! defined_with_params(Package[$name], $param_hash)) {
     package { $name:
-      tag => ['pax_package'] + $tag,
-      *   => $params.delete('tag')
+      *   => $param_hash
     }
   }
 
