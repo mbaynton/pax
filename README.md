@@ -29,6 +29,13 @@ Configure required repositories and install the package git:
 
     $package_ref = pax::package('git')
 
+Ensure git is installed before calling it:
+
+    exec { 'git version':
+      command => '/usr/bin/git --version',
+      require => pax::cmd('git'),
+    }
+
 pax can be configured not to manage repositories and repository trusts by declaring the pax class before calling any pax functions:
 
     class { 'pax':
