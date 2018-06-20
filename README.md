@@ -21,22 +21,24 @@ By default, pax will automatically configure any required repositories and repos
 
 ## Usage
 
-Configure repositories and install packages required for the command git:
+**a)** Configure repositories and install packages required for the command git:
 
     $package_ref = pax::cmd('git')
 
-Configure required repositories and install the package git:
+**b)** Configure required repositories and install the package git:
 
     $package_ref = pax::package('git')
 
-Ensure git is installed before calling it:
+If you are writing your Puppet code to be cross-platform, it may be easiest to use only `pax::cmd` so as to avoid complications arising from package naming differences.
+
+**c)** Ensure git is installed before calling it:
 
     exec { 'git version':
       command => '/usr/bin/git --version',
       require => pax::cmd('git'),
     }
 
-pax can be configured not to manage repositories and repository trusts by declaring the pax class before calling any pax functions:
+**d)** pax can be configured not to manage repositories and repository trusts by declaring the pax class before calling any pax functions:
 
     class { 'pax':
       manage_repos      => false,
