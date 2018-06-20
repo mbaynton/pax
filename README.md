@@ -1,81 +1,165 @@
-
-# pax
-
-Welcome to your new module. A short overview of the generated parts can be found in the PDK documentation at https://puppet.com/pdk/latest/pdk_generating_modules.html .
-
-The README template below provides a starting point with details about what information to include in your README.
-
-
-
-
-
-
-
 #### Table of Contents
 
 1. [Description](#description)
 2. [Setup - The basics of getting started with pax](#setup)
     * [What pax affects](#what-pax-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with pax](#beginning-with-pax)
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
 
 ## Description
 
-Start with a one- or two-sentence summary of what the module does and/or what problem it solves. This is your 30-second elevator pitch for your module. Consider including OS/Puppet version it works with.
+A hiera-powered approach to software and repository management for Puppet
 
-You can give more descriptive information in a second paragraph. This paragraph should answer the questions: "What does this module *do*?" and "Why would I use it?" If your module has a range of functionality (installation, configuration, management, etc.), this is the time to mention it.
+pax provides an abstraction layer to software and repository management that allows users to simply request a command or package be provided and let Puppet deal with configuring the required repositories and installing the correct packages.
 
 ## Setup
 
-### What pax affects **OPTIONAL**
+### What pax affects
 
-If it's obvious what your module touches, you can skip this section. For example, folks can probably figure out that your mysql_instance module affects their MySQL instances.
-
-If there's more that they should know about, though, this is the place to mention:
-
-* Files, packages, services, or operations that the module will alter, impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
-
-### Beginning with pax
-
-The very basic steps needed for a user to get the module up and running. This can include setup steps, if necessary, or it can be an example of the most basic use of the module.
+By default, pax will automatically configure any required repositories and repository GPG keys to provide the requested command or package. This can be controlled with the [manage_repos](#manage_repos) and [manage_repo_trust](#manage_repo_trust) parameters.
 
 ## Usage
 
-This section is where you describe how to customize, configure, and do the fancy stuff with your module here. It's especially helpful if you include usage examples and code samples for doing things with your module.
+**a)** Configure repositories and install packages required for the command git:
+
+    $package_ref = pax::cmd('git')
+
+**b)** Configure required repositories and install the package git:
+
+    $package_ref = pax::package('git')
+
+If you are writing your Puppet code to be cross-platform, it may be easiest to use only `pax::cmd` so as to avoid complications arising from package naming differences.
+
+**c)** Ensure git is installed before calling it:
+
+    exec { 'git version':
+      command => '/usr/bin/git --version',
+      require => pax::cmd('git'),
+    }
+
+**d)** pax can be configured not to manage repositories and repository trusts by declaring the pax class before calling any pax functions:
+
+    class { 'pax':
+      manage_repos      => false,
+      manage_repo_trust => false,
+    }
+
+### Adding data to paxdb
+
+pax is configured to get all of its repository, package and command data from Hiera. Check out [hiera.yaml](hiera.yaml) for the current hierarchy.
+
+#### Adding a repository GPG key
+
+```YAML
+pax::repotrust:
+  RPM-GPG-KEY-SHIBBOLETH-7:
+    resource: pax::repo_helpers::rpm_gpg_key
+    params:
+      file: /etc/pki/rpm-gpg/RPM-GPG-KEY-SHIBBOLETH-7
+      content: |
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+        ...
+        -----END PGP PUBLIC KEY BLOCK-----
+```
+
+#### Adding a repository
+
+```YAML
+pax::repo:
+  shibboleth:
+    resource: yumrepo
+    params:
+      enabled: true
+      enable_baseurl: false
+      mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/CentOS_7
+      descr: Shibboleth for Enterprise Linux
+      gpgcheck: 1
+      gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-%{::pax::repo_helpers::el::releasever}
+    repotrust: RPM-GPG-KEY-SHIBBOLETH-%{::pax::repo_helpers::el::releasever}
+```
+
+#### Adding a package
+
+```YAML
+pax::package:
+  shibboleth.x86_64:
+    repo: shibboleth
+```
+
+#### Adding a command
+
+```YAML
+pax::cmd-package:
+  shibboleth-sp: shibboleth.x86_64
+```
 
 ## Reference
 
-Users need a complete list of your module's classes, types, defined types providers, facts, and functions, along with the parameters for each. You can provide this list either via Puppet Strings code comments or as a complete list in the README Reference section.
+### Class: pax
 
-* If you are using Puppet Strings code comments, this Reference section should include Strings information so that your users know how to access your documentation.
+Base class that configures whether to manage repositories and repository GPG keys. Including or declaring this class is not required if the defaults are acceptable.
 
-* If you are not using Puppet Strings, include a list of all of your classes, defined types, and so on, along with their parameters. Each element in this listing should include:
+#### Parameters
 
-  * The data type, if applicable.
-  * A description of what the element does.
-  * Valid values, if the data type doesn't make it obvious.
-  * Default value, if any.
+##### [*manage_repos*]
+Whether pax should manage system repositories. Default: *true*
+
+##### [*manage_repo_trust*]
+Whether pax should manage repository GPG keys. Default: *true*
+
+### Function: pax::cmd
+
+Function used to install a command or other piece of
+software by its pax canonical name. For software commonly
+run from the command line whose name is consistent from
+distribution to ditribution (things like awk), its pax
+canonical name should be what you expect.
+
+Internally, the pax database translates the cmd name to
+the name of the package that contains that command on your
+operating system, and installs that package. As a result,
+using this function in your manifests is, to the extent
+the pax database has knowledge, OS independent.
+
+#### Parameters
+
+##### [*name*]
+The name of the command or software to install.
+
+###### Return
+An array of Resource types that were added to the manifest as a result
+of calling this function.
+You can use this, for example, in require => metaparameters.
+
+### Function: pax::package
+
+Function used to install a package by the name known to your OS's
+package manager.
+
+#### Parameters
+
+##### [*name*]
+The name of the package to install.
+
+###### Return
+An array of Resource types that were added to the manifest as a result
+of calling this function.
+You can use this, for example, in require => metaparameters.
+
+### Function: pax::repo
+
+Function used to configure a repository.
+
+#### Parameters
+
+##### [*name*]
+The name of the repository to configure.
+
+###### Return
+
+An OS-specific repository resource. (Currently only yumrepo)
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there are Known Issues, you might want to include them under their own heading here.
-
-## Development
-
-Since your module is awesome, other users will want to play with it. Let them know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You can also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
+pax has a limited command/package/repository database included and currently only has built-in support for CentOS/RHEL 5 and 7.
